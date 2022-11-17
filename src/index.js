@@ -1,22 +1,26 @@
 import Notiflix from 'notiflix';
-import API from './fetchSomething';
+import SearchImg from './fetchSomething';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import createImgCard from './templates/img.hbs';
 
+const searchImg = new SearchImg();
 const refs = {
   form: document.querySelector('.search-form'),
   galleryDiv: document.querySelector('.gallery'),
+  loadMoreBtn: document.querySelector('.load-more'),
 };
 
 refs.form.addEventListener('submit', onFormSearch);
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
 function onFormSearch(e) {
   e.preventDefault();
-  const query = e.currentTarget.elements.searchQuery.value;
+  searchImg.query = e.currentTarget.elements.searchQuery.value;
   refs.galleryDiv.innerHTML = '';
 
-  API.fetchImgByName(query)
+  searchImg
+    .fetchImgByName()
     .then(data => {
       if (!data.hits.length) {
         Notiflix.Notify.info(
@@ -68,4 +72,8 @@ function createMarkUp(arrayOfPhotos) {
   const lightbox = new SimpleLightbox('div.photo-card a', {
     captionDelay: 250,
   });
+}
+
+function onLoadMoreBtn() {
+  searchImg.fetchImgByName();
 }
