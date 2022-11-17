@@ -14,11 +14,16 @@ refs.form.addEventListener('submit', onFormSearch);
 function onFormSearch(e) {
   e.preventDefault();
   const query = e.currentTarget.elements.searchQuery.value;
-  console.log(query);
+  refs.galleryDiv.innerHTML = '';
+
   API.fetchImgByName(query)
     .then(data => {
-      if (!data.length) {
-        Notiflix;
+      if (!data.hits.length) {
+        Notiflix.Notify.info(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        createMarkUp(data.hits);
       }
     })
     .catch(error => console.log(error));
@@ -38,26 +43,29 @@ function createMarkUp(arrayOfPhotos) {
       }) => {
         return `
         <div class="photo-card">
-        <a href="${largeImageURL}">
-        <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-        <div class="info">
+          <a href="${largeImageURL}">
+            <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+          </a>
+          <div class="info">
             <p class="info-item">
-                <b>Likes ${likes}</b>
+              <b>Likes ${likes}</b>
             </p>
             <p class="info-item">
-                <b>Views ${views}</b>
+              <b>Views ${views}</b>
             </p>
             <p class="info-item">
-                <b>Comments ${comments}</b>
+              <b>Comments ${comments}</b>
             </p>
             <p class="info-item">
-                <b>Downloads${downloads}</b>
+              <b>Downloads ${downloads}</b>
             </p>
-        </div>
-        </a>
+          </div>          
         </div>`;
       }
     )
     .join('');
-  refs.galleryDiv.insertAdjacentHTML('afterend', markUp);
+  refs.galleryDiv.insertAdjacentHTML('beforeend', markUp);
+  const lightbox = new SimpleLightbox('div.photo-card a', {
+    captionDelay: 250,
+  });
 }
