@@ -2,9 +2,9 @@ import Notiflix from 'notiflix';
 import SearchImg from './fetchSomething';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import createImgCard from './templates/img.hbs';
 
 const searchImg = new SearchImg();
+
 const refs = {
   form: document.querySelector('.search-form'),
   galleryDiv: document.querySelector('.gallery'),
@@ -23,7 +23,9 @@ function onFormSearch(e) {
     Notiflix.Notify.failure('Please, type below your search query!');
     return;
   }
-  searchImg.query = e.currentTarget.elements.searchQuery.value;
+  searchImg.query = e.currentTarget.elements.searchQuery.value
+    .toLowerCase()
+    .trim();
   refs.galleryDiv.innerHTML = '';
   searchImg.page = 1;
   searchImg
@@ -44,6 +46,7 @@ function onFormSearch(e) {
       }
     })
     .catch(error => console.log(error));
+  e.target.reset();
 }
 
 function createMarkUp(arrayOfPhotos) {
