@@ -9,10 +9,13 @@ const refs = {
   form: document.querySelector('.search-form'),
   galleryDiv: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
+  resetBtn: document.querySelector('.reset'),
+  buttonsDiv: document.querySelector('.buttons-container'),
 };
 
 refs.form.addEventListener('submit', onFormSearch);
 refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
+refs.resetBtn.addEventListener('click', onResetBtn);
 
 function onFormSearch(e) {
   e.preventDefault();
@@ -36,7 +39,7 @@ function onFormSearch(e) {
         createMarkUp(data.hits);
         return;
       } else {
-        refs.loadMoreBtn.classList.remove('is-hidden');
+        refs.buttonsDiv.classList.remove('is-hidden');
         createMarkUp(data.hits);
       }
     })
@@ -98,9 +101,15 @@ function onLoadMoreBtn() {
         );
         return;
       } else {
-        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        Notiflix.Notify.success(
+          `Hooray! We found ${data.totalHits - searchImg.page * 12} images.`
+        );
         createMarkUp(data.hits);
       }
     })
     .catch(error => console.log(error));
+}
+
+function onResetBtn() {
+  location.reload();
 }
