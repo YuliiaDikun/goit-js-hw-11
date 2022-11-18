@@ -53,26 +53,25 @@ function createMarkUp(arrayOfPhotos) {
           </a>  
           <div class="info">
             <p class="info-item">
-              <b>Likes ${likes}</b>
+              <b> ${likes}</b>
+            </p>
+            <p class="info-item"> 
+              <b> ${views}</b>
             </p>
             <p class="info-item">
-              <b>Views ${views}</b>
+              <b> ${comments}</b>
             </p>
             <p class="info-item">
-              <b>Comments ${comments}</b>
-            </p>
-            <p class="info-item">
-              <b>Downloads ${downloads}</b>
+              <b> ${downloads}</b>
             </p>
           </div>                  
         </div>`;
     }
   );
-  const firstSevenItems = allImg.slice(0, 3).join('');
-  const secondImg = allImg.slice(3, 6).join('');
-  const thirdImg = allImg.slice(6, 9).join('');
-  const fourthImg = allImg.slice(9).join('');
-  const markUp = `<div class="column">${firstSevenItems}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div><div class="column">${fourthImg}</div>`;
+  const firstSevenItems = allImg.slice(0, 4).join('');
+  const secondImg = allImg.slice(4, 8).join('');
+  const thirdImg = allImg.slice(8).join('');
+  const markUp = `<div class="column">${firstSevenItems}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div>`;
   refs.galleryDiv.insertAdjacentHTML('beforeend', markUp);
   const lightbox = new SimpleLightbox('div.photo-card a', {
     captionDelay: 250,
