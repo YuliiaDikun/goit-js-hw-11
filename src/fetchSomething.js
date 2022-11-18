@@ -10,7 +10,7 @@ export default class SearchImg {
       key: '31392505-41b93051c6715e7012a1d9703',
       q: this.name,
       page: this.page,
-      per_page: 10,
+      per_page: 12,
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,

@@ -18,15 +18,21 @@ function onFormSearch(e) {
   e.preventDefault();
   searchImg.query = e.currentTarget.elements.searchQuery.value;
   refs.galleryDiv.innerHTML = '';
-
+  searchImg.page = 1;
   searchImg
     .fetchImgByName()
     .then(data => {
-      if (!data.hits.length) {
+      if (!data.total) {
         Notiflix.Notify.info(
           'Sorry, there are no images matching your search query. Please try again.'
         );
+        return;
+      }
+      if (data.total === 1) {
+        createMarkUp(data.hits);
+        return;
       } else {
+        refs.loadMoreBtn.classList.remove('is-hidden');
         createMarkUp(data.hits);
       }
     })
@@ -34,22 +40,17 @@ function onFormSearch(e) {
 }
 
 function createMarkUp(arrayOfPhotos) {
-  const markUp = arrayOfPhotos
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `
+  const allImg = arrayOfPhotos.map(
+    (
+      { webformatURL, largeImageURL, tags, likes, views, comments, downloads },
+      inx
+    ) => {
+      return `
         <div class="photo-card">
-          <a href="${largeImageURL}">
-            <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-          </a>
+          <a class="photo-card__link" href="${largeImageURL}">          
+          <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+           
+          </a>  
           <div class="info">
             <p class="info-item">
               <b>Likes ${likes}</b>
@@ -63,11 +64,15 @@ function createMarkUp(arrayOfPhotos) {
             <p class="info-item">
               <b>Downloads ${downloads}</b>
             </p>
-          </div>          
+          </div>                  
         </div>`;
-      }
-    )
-    .join('');
+    }
+  );
+  const firstSevenItems = allImg.slice(0, 3).join('');
+  const secondImg = allImg.slice(3, 6).join('');
+  const thirdImg = allImg.slice(6, 9).join('');
+  const fourthImg = allImg.slice(9).join('');
+  const markUp = `<div class="column">${firstSevenItems}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div><div class="column">${fourthImg}</div>`;
   refs.galleryDiv.insertAdjacentHTML('beforeend', markUp);
   const lightbox = new SimpleLightbox('div.photo-card a', {
     captionDelay: 250,
@@ -75,5 +80,17 @@ function createMarkUp(arrayOfPhotos) {
 }
 
 function onLoadMoreBtn() {
-  searchImg.fetchImgByName();
+  searchImg
+    .fetchImgByName()
+    .then(data => {
+      console.log(data);
+      if (!data.hits.length) {
+        Notiflix.Notify.info(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        createMarkUp(data.hits);
+      }
+    })
+    .catch(error => console.log(error));
 }
