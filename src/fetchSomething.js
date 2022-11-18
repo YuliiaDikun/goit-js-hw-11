@@ -4,7 +4,6 @@ export default class SearchImg {
     this.page = 1;
   }
   fetchImgByName() {
-    console.log(this);
     const BASE_URL = 'https://pixabay.com/api/';
     const searchParams = new URLSearchParams({
       key: '31392505-41b93051c6715e7012a1d9703',

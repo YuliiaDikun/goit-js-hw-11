@@ -16,6 +16,10 @@ refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 
 function onFormSearch(e) {
   e.preventDefault();
+  if (!e.currentTarget.elements.searchQuery.value) {
+    Notiflix.Notify.failure('Please, type below your search query!');
+    return;
+  }
   searchImg.query = e.currentTarget.elements.searchQuery.value;
   refs.galleryDiv.innerHTML = '';
   searchImg.page = 1;
@@ -23,7 +27,7 @@ function onFormSearch(e) {
     .fetchImgByName()
     .then(data => {
       if (!data.total) {
-        Notiflix.Notify.info(
+        Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
@@ -41,10 +45,15 @@ function onFormSearch(e) {
 
 function createMarkUp(arrayOfPhotos) {
   const allImg = arrayOfPhotos.map(
-    (
-      { webformatURL, largeImageURL, tags, likes, views, comments, downloads },
-      inx
-    ) => {
+    ({
+      webformatURL,
+      largeImageURL,
+      tags,
+      likes,
+      views,
+      comments,
+      downloads,
+    }) => {
       return `
         <div class="photo-card">
           <a class="photo-card__link" href="${largeImageURL}">          
@@ -68,26 +77,28 @@ function createMarkUp(arrayOfPhotos) {
         </div>`;
     }
   );
-  const firstSevenItems = allImg.slice(0, 4).join('');
+  const firstImg = allImg.slice(0, 4).join('');
   const secondImg = allImg.slice(4, 8).join('');
   const thirdImg = allImg.slice(8).join('');
-  const markUp = `<div class="column">${firstSevenItems}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div>`;
+  const markUp = `<div class="column">${firstImg}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div>`;
   refs.galleryDiv.insertAdjacentHTML('beforeend', markUp);
   const lightbox = new SimpleLightbox('div.photo-card a', {
     captionDelay: 250,
   });
+  lightbox.refresh();
 }
 
 function onLoadMoreBtn() {
   searchImg
     .fetchImgByName()
     .then(data => {
-      console.log(data);
-      if (!data.hits.length) {
-        Notiflix.Notify.info(
-          'Sorry, there are no images matching your search query. Please try again.'
+      if (data.totalHits === data.page) {
+        Notiflix.Notify.failure(
+          "We're sorry, but you've reached the end of search results."
         );
+        return;
       } else {
+        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
         createMarkUp(data.hits);
       }
     })
