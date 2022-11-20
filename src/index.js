@@ -19,25 +19,30 @@ refs.resetBtn.addEventListener('click', onResetBtn);
 
 function onFormSearch(e) {
   e.preventDefault();
-  if (!e.currentTarget.elements.searchQuery.value) {
+  const {
+    elements: { searchQuery },
+  } = e.target;
+
+  const searchValue = searchQuery.value.toLowerCase().trim();
+
+  if (!searchValue) {
     Notiflix.Notify.failure('Please, type below your search query!');
     return;
   }
-  searchImg.query = e.currentTarget.elements.searchQuery.value
-    .toLowerCase()
-    .trim();
+  searchImg.query = searchValue;
   refs.galleryDiv.innerHTML = '';
   searchImg.page = 1;
   searchImg
     .fetchImgByName()
     .then(data => {
+      const isMorePhotos = searchImg.page <= Math.ceil(data.totalHits / 12);
       if (!data.total) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return;
       }
-      if (data.total === 1) {
+      if (!isMorePhotos) {
         createMarkUp(data.hits);
         return;
       } else {
@@ -98,16 +103,18 @@ function onLoadMoreBtn() {
   searchImg
     .fetchImgByName()
     .then(data => {
-      if (data.totalHits === data.page) {
+      if (data.hits.length >= 12) {
+        Notiflix.Notify.success(
+          `Hooray! We found ${(searchImg.page - 1) * 12} images.`
+        );
+        createMarkUp(data.hits);
+      } else if (data.hits.length < 12) {
+        refs.buttonsDiv.classList.add('is-hidden');
+        createMarkUp(data.hits);
         Notiflix.Notify.failure(
           "We're sorry, but you've reached the end of search results."
         );
         return;
-      } else {
-        Notiflix.Notify.success(
-          `Hooray! We found ${data.totalHits - searchImg.page * 12} images.`
-        );
-        createMarkUp(data.hits);
       }
     })
     .catch(error => console.log(error));
