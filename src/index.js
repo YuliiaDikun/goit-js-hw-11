@@ -4,6 +4,9 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const searchImg = new SearchImg();
+const lightbox = new SimpleLightbox('div.photo-card a', {
+  captionDelay: 250,
+});
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -93,9 +96,7 @@ function createMarkUp(arrayOfPhotos) {
   const thirdImg = allImg.slice(8).join('');
   const markUp = `<div class="column">${firstImg}</div><div class="column">${secondImg}</div><div class="column">${thirdImg}</div>`;
   refs.galleryDiv.insertAdjacentHTML('beforeend', markUp);
-  const lightbox = new SimpleLightbox('div.photo-card a', {
-    captionDelay: 250,
-  });
+
   lightbox.refresh();
 }
 
